@@ -1,0 +1,40 @@
+name: Build Minecraft Mod
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Unzip project files
+        run: |
+          unzip -o "VisualMod (1).zip" -d temp_extract
+          if [ -d "temp_extract/VisualMod" ]; then
+            cp -r temp_extract/VisualMod/* .
+          else
+            cp -r temp_extract/* .
+          fi
+          chmod +x gradlew
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build with Gradle
+        run: ./gradlew build --stacktrace --info
+
+      - name: Upload Mod Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-mod
+          path: build/libs/*.jar
+          
