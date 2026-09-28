@@ -2,8 +2,9 @@ name: Build Minecraft Mod
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "основной" ]
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,10 +19,13 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Build with Gradle
         run: ./gradlew build --stacktrace --info
 
-      - name: Upload Mod Artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: compiled-mod
